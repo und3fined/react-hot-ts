@@ -1,10 +1,9 @@
 var path = require('path');
 var webpack = require('webpack');
 
-const HMR_PORT = 3000;
+const HMR_PORT = 3333;
 
 const hmr = [
-    'react-hot-loader/patch', 
     `webpack-dev-server/client?http://localhost:${HMR_PORT}`,
     'webpack/hot/only-dev-server'
 ];
@@ -12,30 +11,32 @@ const hmr = [
 module.exports = {
     entry: hmr.concat(['./src/index.tsx']),
     resolve: {
-        extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
+        extensions: [
+            '.ts', '.tsx', '.js', '.jsx', '.json'
+        ],
         modules: [
-            "node_modules",
-            path.join(__dirname, '../src')
+            "node_modules", path.join(__dirname, './src')
         ]
     },
     output: {
         filename: 'bundle.js',
         // the output bundle
 
-        path: path.resolve(__dirname, '../dist'),
+        path: path.resolve(__dirname, './dist'),
 
         publicPath: '/static/'
         // necessary for HMR to know where to load the hot update chunks
     },
 
-    devtool: 'inline-source-map',
+    devtool: 'source-map',
 
     module: {
         rules: [
             {
                 test: /\.tsx?$/,
-                loader: 'awesome-typescript-loader',
-                exclude: path.join(__dirname, '../node_modules')
+                loader: ['react-hot-loader/webpack', 'awesome-typescript-loader'],
+                exclude: path.join(__dirname, './node_modules'),
+                include: path.resolve(__dirname, "./src"),
             }
         ]
     },
@@ -47,7 +48,7 @@ module.exports = {
         new webpack.NamedModulesPlugin(),
         // prints more readable module names in the browser console on HMR updates
 
-        new webpack.NoEmitOnErrorsPlugin(),
+        new webpack.NoEmitOnErrorsPlugin()
         // do not emit compiled assets that include errors
     ],
 
@@ -58,7 +59,7 @@ module.exports = {
         historyApiFallback: true,
         // respond to 404s with index.html
 
-        hot: true,
+        hot: true
         // enable HMR on the server
     }
-};
+}

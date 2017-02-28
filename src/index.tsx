@@ -10,4 +10,15 @@ const render = (Component: any) => {
 
 render(App);
 
-if (module.hot) module.hot.accept('./App', () => render(App));
+if (module.hot) {
+    module.hot.accept('./App', () => {
+
+        // I do not know why!
+        // if without this line, the hot reload not work!!!
+        // no document for this issue.
+        const NextApp = require("./App").default; 
+
+        // You can use 'App' or 'NextApp'
+        render(NextApp);
+    });
+}
